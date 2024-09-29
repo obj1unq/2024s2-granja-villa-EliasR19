@@ -1,12 +1,110 @@
 import wollok.game.*
+import hector.*
+import granja.*
 
 class Maiz {
-	method position() {
-		// TODO: hacer que aparezca donde lo plante Hector
-		return game.at(1, 1)
-	}
+    var estado = "baby"
+
+	var property position = hector.position()
+
 	method image() {
 		// TODO: hacer que devuelva la imagen que corresponde
-		return "corn_baby.png"
+		return "corn_" + estado + ".png"
 	}
+
+//CRECER (REGAR)
+    method crecer() {
+        estado = "adult"
+    }
+
+
+//COSECHAR
+    method cosechar(){
+        self.puedeCosecharse()
+        game.removeVisual(self)
+        granja.cosechar(self)
+    }
+
+    method puedeCosecharse(){
+        if(estado == "baby"){
+            self.error(null)
+        }
+    }
+
+//VENDER
+    method valor(){
+        return 150
+    }
+}
+
+class Trigo{
+    var estado = 0
+
+    var property position = hector.position()
+    method image() {
+		// TODO: hacer que devuelva la imagen que corresponde
+		return "wheat_" + estado.toString() + ".png"
+	}
+
+//CRECER (REGAR)
+    method crecer(){
+        estado = (estado + 1) % 4
+    }
+
+
+//COSECHAR
+    method cosechar(){
+        self.puedeCosecharse()
+        granja.cosechar(self)
+        game.removeVisual(self)
+    }
+
+    method puedeCosecharse(){
+        if(estado < 2){
+            self.error("No se puede cosechar")
+        }
+    }
+
+//VENDER
+    method valor(){
+        return (estado - 1) * 100
+    }
+   
+}
+
+class Tomaco {
+
+    var property position = hector.position()
+    method image() {
+		// TODO: hacer que devuelva la imagen que corresponde
+		return "tomaco.png"
+	}
+
+//CRECER (REGAR)
+    method crecer(){
+        self.validarCrecer()
+        position = position.up(1)
+    }
+
+    method validarCrecer() {
+        if(!self.puedeCrecer()){
+            self.error(null)
+        }
+    }
+
+    method puedeCrecer() {
+        return position.y() <= game.height() - 2
+    }
+
+//COSECHAR
+    method cosechar(){
+        game.removeVisual(self)
+        granja.cosechar(self)
+    }
+
+//VENDER
+    method valor(){
+        return 80
+    }
+
 }
