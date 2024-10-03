@@ -29,7 +29,7 @@ program farmville {
 
     keyboard.r().onPressDo( {hector.regarAhi()})
     keyboard.c().onPressDo( { hector.cosecharAhi()})
-    keyboard.v().onPressDo( {hector.vender()})
+    keyboard.v().onPressDo( {hector.venderTodo()})
     keyboard.space().onPressDo( {hector.contar()})
 
     // COLISIONES

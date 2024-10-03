@@ -35,6 +35,13 @@ class Maiz {
     method valor(){
         return 150
     }
+
+
+
+//SOLO PARA PODER HACER LOS TEST 
+    method estado(){
+        return estado
+    }
 }
 
 class Trigo{
@@ -68,6 +75,13 @@ class Trigo{
 //VENDER
     method valor(){
         return (estado - 1) * 100
+    }
+
+
+
+//SOLO PARA PODER HACER LOS TEST 
+    method estado(){
+        return estado
     }
    
 }

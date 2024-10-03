@@ -4,7 +4,7 @@ import granja.*
 
 object hector {
     var oro = 0
-    const cosechado = []
+    var cosechado = []  //sería const, pero lo dejo en var para los tests
 	var property position = game.center()
 	const property image = "player.png"
 
@@ -53,14 +53,28 @@ object hector {
     }
 
 //VENDER
-    method vender() {
+    method venderTodo() {
         oro = cosechado.sum( {cultivo => cultivo.valor()})
         cosechado.clear()
     }
 
 
     method contar(){
-        return game.say(self, "tengo" + oro + " monedas y" + cosechado.size() + " plantas para vender")
+        return game.say(self, "tengo " + oro + " monedas y " + cosechado.size() + " plantas para vender")
+    }
+
+
+
+
+//SOLO PARA LOS TEST
+    method cosechado(listaCultivos){
+        cosechado = listaCultivos
+    }
+    method cosechado() {
+        return cosechado
+    }
+    method oro() {
+        return oro
     }
 }
 

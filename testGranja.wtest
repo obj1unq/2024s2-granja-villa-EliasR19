@@ -1,0 +1,132 @@
+import wollok.game.*
+import hector.*
+import cultivos.*
+import granja.*
+
+describe "Sembrar" {
+    test"hector siembra  todo bien"{
+        const inicio = game.at(1,1)
+        const trigoA = new Trigo()
+        hector.position(inicio)
+        hector.sembrar(trigoA)
+        assert.that(granja.hayCultivoEn(hector.position().x(), hector.position().y()))
+
+        const maizA = new Maiz()
+        hector.position(hector.position().right(1))
+        hector.sembrar(maizA)
+        assert.that(granja.hayCultivoEn(hector.position().x(), hector.position().y()))
+        
+       
+        const tomacoA = new Tomaco()
+        hector.position(hector.position().right(1))
+        hector.sembrar(tomacoA)
+        assert.that(granja.hayCultivoEn(hector.position().x(), hector.position().y()))
+
+        assert.equals([trigoA, maizA, tomacoA], granja.cultivos() )
+    
+    }
+
+    test" hector siembra en el mismo lugar dos plantas" {
+        const trigoA = new Trigo()
+        const tomacoA = new Tomaco() 
+        hector.sembrar(trigoA)
+        assert.throwsException({ hector.sembrar(tomacoA) })
+    }
+
+}
+
+
+describe "Regar"{
+    test"Hector riega trigo" {
+        const inicio = game.at(1,1)
+        const trigoA = new Trigo()
+
+        hector.position(inicio)
+
+        hector.sembrar(trigoA)
+        assert.doesNotThrowException({ hector.regarAhi() })
+        //hector.regarAhi()
+        assert.equals( 1, trigoA.estado())
+
+        hector.regarAhi()
+        hector.regarAhi()
+        assert.equals( 3, trigoA.estado())
+
+        hector.regarAhi()
+        assert.equals( 0, trigoA.estado())
+
+
+    }
+    test"Hector riega Maiz"{
+        const inicio = game.at(1,1)
+        const maizA = new Maiz()
+
+        hector.sembrar(maizA)
+        hector.regarAhi() 
+        assert.equals("adult", maizA.estado())     
+
+        hector.regarAhi() 
+        assert.equals("adult", maizA.estado())     
+
+    }
+    test"Hector riega Tomaco" {
+        const inicio = game.at(1,1)
+        const tomacoA = new Tomaco()
+
+        hector.position(inicio)
+
+        hector.sembrar(tomacoA)
+        hector.regarAhi()
+        assert.notThat(granja.hayCultivoEn(hector.position().x(), hector.position().y()))
+        assert.that(granja.hayCultivoEn(hector.position().x(), hector.position().y()+1))
+
+    }
+
+    test"Hector no puede regar" {
+        assert.throwsException({ hector.regarAhi() })
+    }
+}
+
+describe"Cosecha" {
+    test"Hector cosecha o no maiz" {
+        //HECTOR NO PUEDE COSECHAR MAIZ
+        const maizA = new Maiz()
+
+        hector.sembrar(maizA)
+        assert.throwsException({hector.cosecharAhi()})
+
+
+        //SI PUEDE
+        hector.regarAhi()
+        assert.doesNotThrowException({ hector.cosecharAhi() })
+
+    }
+
+    test"Hector cosecha o no trigo" {
+        const trigoA = new Trigo()
+
+        //NO PUEDE
+        hector.sembrar(trigoA)
+        assert.throwsException({ hector.cosecharAhi() })
+
+        //SI PUEDE
+        hector.regarAhi()
+        hector.regarAhi()
+        assert.doesNotThrowException({ hector.cosecharAhi() })
+
+    }
+}
+
+describe "VENDE" {
+    test"Hector vende todo" {
+        const maizA = new Maiz(estado = "adult")
+        const trigoA = new Trigo(estado = 3)
+        const tomacoA = new Tomaco()
+
+        hector.cosechado([maizA, trigoA, tomacoA])
+
+        hector.venderTodo()
+        assert.equals(430, hector.oro())
+        assert.equals([], hector.cosechado())
+    }
+}
