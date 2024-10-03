@@ -3,6 +3,7 @@ import hector.*
 import cultivos.*
 import movimiento.*
 import granja.*
+import mercados.*
 
 program farmville {
 	//  CONFIG	
@@ -13,6 +14,9 @@ program farmville {
 
 	//  VISUALES
  	game.addVisual(hector)
+   
+    mercados.iniciar()
+
  	//game.addVisual(new Maiz()) // Se agrega a modo de prueba
 
 
@@ -32,7 +36,9 @@ program farmville {
     keyboard.v().onPressDo( {hector.venderTodo()})
     keyboard.space().onPressDo( {hector.contar()})
 
-    // COLISIONES
+    keyboard.z().onPressDo( {hector.ponerAspersorAhi()})
+
+
 
 
  	//  COMIENZA

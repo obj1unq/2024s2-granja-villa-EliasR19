@@ -1,11 +1,19 @@
 import wollok.game.*
 import cultivos.*
 import granja.*
+import mercados.*
 
 object hector {
-    var oro = 0
+    var monedas = 0
     var cosechado = []  //sería const, pero lo dejo en var para los tests
-	var property position = game.center()
+    const property aspersores = []
+
+    //MERCADOS
+    const mercadosConocidos = [mercados.mercadoA(), mercados.mercadoB(), mercados.mercadoC()]
+
+
+
+    var property position = game.center()
 	const property image = "player.png"
 
     method mover(direccion) {
@@ -20,7 +28,7 @@ object hector {
     }
 
     method validarSembrar(){
-        if(granja.hayCultivoEn(position.x(), position.y())){
+        if(self.hayAlgoEn(position)){ //position.x(), position.y())){
             self.error("Ya esta ocupado")
         }
     }
@@ -33,7 +41,7 @@ object hector {
     }
 
     method validarRegar(){
-        if(!granja.hayCultivoEn(position.x(), position.y())){
+        if(!self.hayAlgoEn(position)){
             self.error("No hay planta que regar")
         }
     }
@@ -47,22 +55,62 @@ object hector {
     }
 
     method validarCosechar() {
-         if(!granja.hayCultivoEn(position.x(), position.y())){
+         if(!self.hayAlgoEn(position)){
             self.error("No tengo nada para cosechar")
         }
     }
 
 //VENDER
     method venderTodo() {
-        oro = cosechado.sum( {cultivo => cultivo.valor()})
+        self.validarVender()
+        const mercado = game.uniqueCollider(self)  // Se comenta para los test
+        mercado.comprarCosas(self.cosechado())      //Se comenta para los test
+        monedas = monedas + cosechado.sum( {cultivo => cultivo.valor()})
         cosechado.clear()
     }
 
-
     method contar(){
-        return game.say(self, "tengo " + oro + " monedas y " + cosechado.size() + " plantas para vender")
+        return game.say(self, "tengo " + monedas + " monedas y " + cosechado.size() + " plantas para vender")
     }
 
+    method validarVender() {
+        if(!self.hayMercadoAca()){
+            self.error("No estoy en un mercado")
+        }
+    }
+    method hayMercadoAca() {
+        return mercadosConocidos.any({mercado => position == mercado.position()})
+    }
+
+//ASPERSORES
+
+    method ponerAspersorAhi(){  // Se pone con la Z porque con la A camina.
+        self.validarPonerAspersor()
+        aspersores.add(new Aspersor())  //Modelado en granja
+        game.addVisual(aspersores.last())
+        aspersores.last().iniciarRiego()
+
+    }
+    method validarPonerAspersor() {
+         if(self.hayAlgoEn(position)){
+            self.error("Ya esta ocupado")
+        }
+    }
+
+
+    //VALIDACIONES
+    method hayAlgoEn(parcela){
+        return granja.hayCultivoEn(parcela) || self.hayAsperorEn(parcela) || self.hayMercadoAca()
+    }
+
+
+
+    method hayAsperorEn(parcela){
+        return aspersores.any({aspersor => aspersor.position().x() == parcela.x() && aspersor.position().y() == parcela.y()})
+    }
+
+
+    method crecer(){} //polimorfismo
 
 
 
@@ -73,10 +121,12 @@ object hector {
     method cosechado() {
         return cosechado
     }
-    method oro() {
-        return oro
+    method monedas() {
+        return monedas
     }
 }
+
+
 
 
 

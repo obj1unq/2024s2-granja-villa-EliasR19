@@ -101,9 +101,13 @@ class Tomaco {
     }
 
     method validarCrecer() {
-        if(!self.puedeCrecer()){
+        if(!self.puedeCrecer() || self.hayObjetoEn(position.up(1))){
             self.error(null)
         }
+    }
+
+    method hayObjetoEn(parcela){
+        return !game.getObjectsIn(parcela).isEmpty()
     }
 
     method puedeCrecer() {

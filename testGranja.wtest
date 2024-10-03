@@ -2,25 +2,26 @@ import wollok.game.*
 import hector.*
 import cultivos.*
 import granja.*
+import mercados.*
 
 describe "Sembrar" {
     test"hector siembra  todo bien"{
-        const inicio = game.at(1,1)
+        const inicio = game.at(1,3)
         const trigoA = new Trigo()
         hector.position(inicio)
         hector.sembrar(trigoA)
-        assert.that(granja.hayCultivoEn(hector.position().x(), hector.position().y()))
-
+        assert.that(granja.hayCultivoEn(hector.position()))
+    
         const maizA = new Maiz()
         hector.position(hector.position().right(1))
         hector.sembrar(maizA)
-        assert.that(granja.hayCultivoEn(hector.position().x(), hector.position().y()))
+        assert.that(granja.hayCultivoEn(hector.position()))
         
        
         const tomacoA = new Tomaco()
         hector.position(hector.position().right(1))
         hector.sembrar(tomacoA)
-        assert.that(granja.hayCultivoEn(hector.position().x(), hector.position().y()))
+        assert.that(granja.hayCultivoEn(hector.position()))
 
         assert.equals([trigoA, maizA, tomacoA], granja.cultivos() )
     
@@ -38,7 +39,7 @@ describe "Sembrar" {
 
 describe "Regar"{
     test"Hector riega trigo" {
-        const inicio = game.at(1,1)
+        const inicio = game.at(1,3)
         const trigoA = new Trigo()
 
         hector.position(inicio)
@@ -58,7 +59,7 @@ describe "Regar"{
 
     }
     test"Hector riega Maiz"{
-        const inicio = game.at(1,1)
+        const inicio = game.at(1,3)
         const maizA = new Maiz()
 
         hector.sembrar(maizA)
@@ -70,15 +71,15 @@ describe "Regar"{
 
     }
     test"Hector riega Tomaco" {
-        const inicio = game.at(1,1)
+        const inicio = game.at(1,3)
         const tomacoA = new Tomaco()
 
         hector.position(inicio)
 
         hector.sembrar(tomacoA)
         hector.regarAhi()
-        assert.notThat(granja.hayCultivoEn(hector.position().x(), hector.position().y()))
-        assert.that(granja.hayCultivoEn(hector.position().x(), hector.position().y()+1))
+        assert.notThat(granja.hayCultivoEn(hector.position()))
+        assert.that(granja.hayCultivoEn(hector.position().up(1)))
 
     }
 
@@ -122,11 +123,22 @@ describe "VENDE" {
         const maizA = new Maiz(estado = "adult")
         const trigoA = new Trigo(estado = 3)
         const tomacoA = new Tomaco()
+        const mercado = new Mercado(position = game.at(1,1), monedas = 500) 
 
         hector.cosechado([maizA, trigoA, tomacoA])
 
+        hector.position(game.at(1,1))
         hector.venderTodo()
-        assert.equals(430, hector.oro())
+        mercado.comprarCosas(hector.cosechado())
+        assert.equals(430, hector.monedas())
         assert.equals([], hector.cosechado())
     }
+}
+
+describe "ASPERSORES"{
+
+}
+
+describe "MERCADOS"{
+    
 }
