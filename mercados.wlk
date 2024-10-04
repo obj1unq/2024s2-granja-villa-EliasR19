@@ -8,7 +8,7 @@ class Mercado{
     method image() { return "market.png"}
 
     var property monedas 
-    const mercaderia = []
+    const property mercaderia = [] // property para los test
 
     method comprarCosas(cosas){
         self.validarComprar(cosas)

@@ -38,7 +38,8 @@ program farmville {
 
     keyboard.z().onPressDo( {hector.ponerAspersorAhi()})
 
-
+    //COLSIONES
+    
 
 
  	//  COMIENZA

@@ -58,15 +58,15 @@ class Aspersor {
         parcelasARegar.forEach({parcela => self.regarCultivoEn(parcela)})
     }
     
-    method regarCultivoEn(parcela){
+    method regarCultivoEn(parcela){                             //agregarle el parametro cultivo para hacer test
         self.validarRegarEn(parcela)
-        const cultivo = game.getObjectsIn(parcela).last()
+        const cultivo = game.getObjectsIn(parcela).last()     //comentar para test
         cultivo.crecer()
     }
 
     method validarRegarEn(parcela){
         if(!granja.hayCultivoEn(parcela)){
-            self.error(null)
+            self.error("null")
         }
     }
 

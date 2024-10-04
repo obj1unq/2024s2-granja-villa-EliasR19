@@ -3,6 +3,7 @@ import hector.*
 import cultivos.*
 import granja.*
 import mercados.*
+import movimiento.*
 
 describe "Sembrar" {
     test"hector siembra  todo bien"{
@@ -136,9 +137,62 @@ describe "VENDE" {
 }
 
 describe "ASPERSORES"{
+    test"Hector coloca aspersor y riega"{
+        const aspersorPos = game.at(1,2)
+        hector.position(aspersorPos)
+        hector.ponerAspersorAhi()
+
+        assert.doesNotThrowException({ hector.hayAsperorEn(aspersorPos) })
+    }
+    test"Aspertor Riega"{
+
+        const inicio = game.at(3,3)
+        hector.position(inicio)
+        hector.ponerAspersorAhi()
+
+        const trigoA = new Trigo(position = inicio.up(1))
+        granja.cultivar(trigoA)
+        assert.that(granja.hayCultivoEn(inicio.up(1)))
+
+        const aspersor = hector.aspersores().head()
+        aspersor.regarCultivoEn(inicio.up(1), trigoA)   //modificar el codigo en granja(class aspersores para que ande :)
+
+        assert.equals(1, trigoA.estado())
+
+        aspersor.regarCultivoEn(inicio.up(1), trigoA)
+        assert.equals(2, trigoA.estado())
+
+    }
 
 }
 
 describe "MERCADOS"{
+    test"Hector vende todo" {
+        const mercadoA = mercados.mercadoA()
+
+        const maizA = new Maiz(estado = "adult")
+        const trigoA = new Trigo(estado = 3)
+        const tomacoA = new Tomaco()
+        //const mercado = new Mercado(position = game.at(1,1), monedas = 500) 
+
+        hector.cosechado([maizA, trigoA, tomacoA])
+
+        hector.position(game.at(1,1))
+        mercadoA.comprarCosas(hector.cosechado())
+        hector.venderTodo()
+        assert.equals(430, hector.monedas())
+        assert.equals([], hector.cosechado())
+
+        assert.equals(570, mercadoA.monedas())
+        assert.equals([maizA, trigoA, tomacoA], mercadoA.mercaderia())
+    }
+
+    test "Hector no encontro el mercado"{
+                const mercadoA = mercados.mercadoA()
+
+                assert.throwsException({hector.venderTodo()})
+
+
+    }
     
 }

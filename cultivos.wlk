@@ -38,6 +38,9 @@ class Maiz {
 
 
 
+
+
+
 //SOLO PARA PODER HACER LOS TEST 
     method estado(){
         return estado
