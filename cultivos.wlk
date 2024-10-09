@@ -3,31 +3,35 @@ import hector.*
 import granja.*
 
 class Maiz {
-    var estado = "baby"
+    var estado = baby
+    var position = null
 
-	var property position = hector.position()
-
+    method position() {return position}
 	method image() {
 		// TODO: hacer que devuelva la imagen que corresponde
 		return "corn_" + estado + ".png"
 	}
 
+    method sembrar(parcela){
+        position = parcela
+    }
+
 //CRECER (REGAR)
     method crecer() {
-        estado = "adult"
+        estado = adult
     }
 
 
 //COSECHAR
     method cosechar(){
-        self.puedeCosecharse()
+        self.validarCosecharse()
         game.removeVisual(self)
         granja.cosechar(self)
     }
 
-    method puedeCosecharse(){
-        if(estado == "baby"){
-            self.error(null)
+    method validarCosecharse(){
+        if(!estado.puedeCosecharse()){
+            self.error("No puedo ser cosechado")
         }
     }
 
@@ -47,14 +51,37 @@ class Maiz {
     }
 }
 
+//ESTADOS MAIZ
+
+object baby{
+    method puedeCosecharse(){
+        return false
+    }
+}
+object adult {
+    method puedeCosecharse(){
+        return true
+    }
+
+
+}
+
+//TRIGO
 class Trigo{
     var estado = 0
 
-    var property position = hector.position()
+    var position = null
+
+    method position() {return position}
     method image() {
 		// TODO: hacer que devuelva la imagen que corresponde
-		return "wheat_" + estado.toString() + ".png"
+		return "wheat_" + estado + ".png"
 	}
+
+    method sembrar(parcela){
+        position = parcela
+    }
+
 
 //CRECER (REGAR)
     method crecer(){
@@ -89,14 +116,29 @@ class Trigo{
    
 }
 
+object uno{
+    method puedeCosecharse() {
+        return false
+    }
+}
+
+
+//TOMACO
 class Tomaco {
 
-    var property position = hector.position()
+    var position = null
+    method position() {return position}
+    var estado = tomaco
+
+
     method image() {
 		// TODO: hacer que devuelva la imagen que corresponde
-		return "tomaco.png"
+		return estado.toString() + ".png"
 	}
 
+    method sembrar(parcela){
+        position = parcela
+    }
 //CRECER (REGAR)
     method crecer(){
         self.validarCrecer()
@@ -128,4 +170,10 @@ class Tomaco {
         return 80
     }
 
+}
+
+object tomaco {
+    method puedeCosechar(){
+        return true
+    }
 }

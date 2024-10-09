@@ -23,6 +23,7 @@ object hector {
     //SEMBRAR
     method sembrar(semilla){
         self.validarSembrar()
+        semilla.sembrar(hector.position())
         granja.cultivar(semilla)
         game.addVisual(semilla)
     }
