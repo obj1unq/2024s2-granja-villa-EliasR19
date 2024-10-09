@@ -1,9 +1,198 @@
-import example.pepita
+import wollok.game.*
+import hector.*
+import cultivos.*
+import granja.*
+import mercados.*
+import movimiento.*
 
-describe "group of tests for pepita" {
+describe "Sembrar" {
+    test"hector siembra  todo bien"{
+        const inicio = game.at(1,3)
+        const trigoA = new Trigo()
+        hector.position(inicio)
+        hector.sembrar(trigoA)
+        assert.that(granja.hayCultivoEn(hector.position()))
+    
+        const maizA = new Maiz()
+        hector.position(hector.position().right(1))
+        hector.sembrar(maizA)
+        assert.that(granja.hayCultivoEn(hector.position()))
+        
+       
+        const tomacoA = new Tomaco()
+        hector.position(hector.position().right(1))
+        hector.sembrar(tomacoA)
+        assert.that(granja.hayCultivoEn(hector.position()))
 
-  test "pepita has initial energy" {
-    assert.equals(100, pepita.energy())
-  }
+        assert.equals([trigoA, maizA, tomacoA], granja.cultivos() )
+    
+    }
 
+    test" hector siembra en el mismo lugar dos plantas" {
+        const trigoA = new Trigo()
+        const tomacoA = new Tomaco() 
+        hector.sembrar(trigoA)
+        assert.throwsException({ hector.sembrar(tomacoA) })
+    }
+
+}
+
+
+describe "Regar"{
+    test"Hector riega trigo" {
+        const inicio = game.at(1,3)
+        const trigoA = new Trigo()
+
+        hector.position(inicio)
+
+        hector.sembrar(trigoA)
+        assert.doesNotThrowException({ hector.regarAhi() })
+        //hector.regarAhi()
+        assert.equals( 1, trigoA.estado())
+
+        hector.regarAhi()
+        hector.regarAhi()
+        assert.equals( 3, trigoA.estado())
+
+        hector.regarAhi()
+        assert.equals( 0, trigoA.estado())
+
+
+    }
+    test"Hector riega Maiz"{
+        const inicio = game.at(1,3)
+        const maizA = new Maiz()
+
+        hector.sembrar(maizA)
+        hector.regarAhi() 
+        assert.equals("adult", maizA.estado())     
+
+        hector.regarAhi() 
+        assert.equals("adult", maizA.estado())     
+
+    }
+    test"Hector riega Tomaco" {
+        const inicio = game.at(1,3)
+        const tomacoA = new Tomaco()
+
+        hector.position(inicio)
+
+        hector.sembrar(tomacoA)
+        hector.regarAhi()
+        assert.notThat(granja.hayCultivoEn(hector.position()))
+        assert.that(granja.hayCultivoEn(hector.position().up(1)))
+
+    }
+
+    test"Hector no puede regar" {
+        assert.throwsException({ hector.regarAhi() })
+    }
+}
+
+describe"Cosecha" {
+    test"Hector cosecha o no maiz" {
+        //HECTOR NO PUEDE COSECHAR MAIZ
+        const maizA = new Maiz()
+
+        hector.sembrar(maizA)
+        assert.throwsException({hector.cosecharAhi()})
+
+
+        //SI PUEDE
+        hector.regarAhi()
+        assert.doesNotThrowException({ hector.cosecharAhi() })
+
+    }
+
+    test"Hector cosecha o no trigo" {
+        const trigoA = new Trigo()
+
+        //NO PUEDE
+        hector.sembrar(trigoA)
+        assert.throwsException({ hector.cosecharAhi() })
+
+        //SI PUEDE
+        hector.regarAhi()
+        hector.regarAhi()
+        assert.doesNotThrowException({ hector.cosecharAhi() })
+
+    }
+}
+
+describe "VENDE" {
+    test"Hector vende todo" {
+        const maizA = new Maiz(estado = "adult")
+        const trigoA = new Trigo(estado = 3)
+        const tomacoA = new Tomaco()
+        const mercado = new Mercado(position = game.at(1,1), monedas = 500) 
+
+        hector.cosechado([maizA, trigoA, tomacoA])
+
+        hector.position(game.at(1,1))
+        hector.venderTodo()
+        mercado.comprarCosas(hector.cosechado())
+        assert.equals(430, hector.monedas())
+        assert.equals([], hector.cosechado())
+    }
+}
+
+describe "ASPERSORES"{
+    test"Hector coloca aspersor y riega"{
+        const aspersorPos = game.at(1,2)
+        hector.position(aspersorPos)
+        hector.ponerAspersorAhi()
+
+        assert.doesNotThrowException({ hector.hayAsperorEn(aspersorPos) })
+    }
+    test"Aspertor Riega"{
+
+        const inicio = game.at(3,3)
+        hector.position(inicio)
+        hector.ponerAspersorAhi()
+
+        const trigoA = new Trigo(position = inicio.up(1))
+        granja.cultivar(trigoA)
+        assert.that(granja.hayCultivoEn(inicio.up(1)))
+
+        const aspersor = hector.aspersores().head()
+        aspersor.regarCultivoEn(inicio.up(1), trigoA)   //modificar el codigo en granja(class aspersores para que ande :)
+
+        assert.equals(1, trigoA.estado())
+
+        aspersor.regarCultivoEn(inicio.up(1), trigoA)
+        assert.equals(2, trigoA.estado())
+
+    }
+
+}
+
+describe "MERCADOS"{
+    test"Hector vende todo" {
+        const mercadoA = mercados.mercadoA()
+
+        const maizA = new Maiz(estado = "adult")
+        const trigoA = new Trigo(estado = 3)
+        const tomacoA = new Tomaco()
+        //const mercado = new Mercado(position = game.at(1,1), monedas = 500) 
+
+        hector.cosechado([maizA, trigoA, tomacoA])
+
+        hector.position(game.at(1,1))
+        mercadoA.comprarCosas(hector.cosechado())
+        hector.venderTodo()
+        assert.equals(430, hector.monedas())
+        assert.equals([], hector.cosechado())
+
+        assert.equals(570, mercadoA.monedas())
+        assert.equals([maizA, trigoA, tomacoA], mercadoA.mercaderia())
+    }
+
+    test "Hector no encontro el mercado"{
+                const mercadoA = mercados.mercadoA()
+
+                assert.throwsException({hector.venderTodo()})
+
+
+    }
+    
 }
