@@ -2,10 +2,13 @@ import hector.*
 import cultivos.*
 import wollok.game.*
 import movimiento.*
+import mercados.*
 
 // Granja
 object granja {
     const cultivos = []
+
+    const mercadosEnGranja = [mercados.mercadoA(), mercados.mercadoB(), mercados.mercadoC()]
 
     method cultivar(cultivo){
         cultivos.add(cultivo)
@@ -26,6 +29,11 @@ object granja {
     method cosechar(cultivo) {
         cultivos.remove(cultivo)
     }
+
+    method hayMercadoAca(parcela){
+        return mercadosEnGranja.any({mercado => parcela == mercado.position()})
+    }
+
 
     //TEST
 }

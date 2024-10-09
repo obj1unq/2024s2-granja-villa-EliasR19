@@ -26,7 +26,7 @@ class Maiz {
     method cosechar(){
         self.validarCosecharse()
         game.removeVisual(self)
-        granja.cosechar(self)
+        //granja.cosechar(self)
     }
 
     method validarCosecharse(){
@@ -92,7 +92,6 @@ class Trigo{
 //COSECHAR
     method cosechar(){
         self.puedeCosecharse()
-        granja.cosechar(self)
         game.removeVisual(self)
     }
 
@@ -115,13 +114,6 @@ class Trigo{
     }
    
 }
-
-object uno{
-    method puedeCosecharse() {
-        return false
-    }
-}
-
 
 //TOMACO
 class Tomaco {
@@ -162,7 +154,7 @@ class Tomaco {
 //COSECHAR
     method cosechar(){
         game.removeVisual(self)
-        granja.cosechar(self)
+        //granja.cosechar(self)
     }
 
 //VENDER

@@ -8,8 +8,7 @@ object hector {
     var cosechado = []  //sería const, pero lo dejo en var para los tests
     const property aspersores = []
 
-    //MERCADOS
-    const mercadosConocidos = [mercados.mercadoA(), mercados.mercadoB(), mercados.mercadoC()]
+    
 
 
 
@@ -23,7 +22,7 @@ object hector {
     //SEMBRAR
     method sembrar(semilla){
         self.validarSembrar()
-        semilla.sembrar(hector.position())
+        semilla.sembrar(self.position())
         granja.cultivar(semilla)
         game.addVisual(semilla)
     }
@@ -51,12 +50,15 @@ object hector {
     method cosecharAhi(){
         self.validarCosechar()
         const cultivo = game.uniqueCollider(self)
-        cosechado.add(cultivo)
         cultivo.cosechar()
+
+        cosechado.add(cultivo)
+        granja.cosechar(cultivo)
     }
 
+
     method validarCosechar() {
-         if(!self.hayAlgoEn(position)){
+         if(!self.hayAlgoEn(position) ){
             self.error("No tengo nada para cosechar")
         }
     }
@@ -75,13 +77,11 @@ object hector {
     }
 
     method validarVender() {
-        if(!self.hayMercadoAca()){
+        if(!granja.hayMercadoAca(position)){
             self.error("No estoy en un mercado")
         }
     }
-    method hayMercadoAca() {
-        return mercadosConocidos.any({mercado => position == mercado.position()})
-    }
+
 
 //ASPERSORES
 
@@ -101,7 +101,7 @@ object hector {
 
     //VALIDACIONES
     method hayAlgoEn(parcela){
-        return granja.hayCultivoEn(parcela) || self.hayAsperorEn(parcela) || self.hayMercadoAca()
+        return granja.hayCultivoEn(parcela) || self.hayAsperorEn(parcela) || granja.hayMercadoAca(parcela)
     }
 
 
